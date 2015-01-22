@@ -1,3 +1,6 @@
+{% extends "main.twig" %}
+{% block content %}
+
 {% do action('woocommerce_before_main_content') %}
 {% if true == true|apply_filters('woocommerce_show_page_title' ) %}
 	<h1 class="page-title">{{ function('woocommerce_page_title') }}</h1>
@@ -23,3 +26,5 @@
 {% endif %}
 
 {% do action('woocommerce_after_main_content') %}
+
+{% endblock %}
