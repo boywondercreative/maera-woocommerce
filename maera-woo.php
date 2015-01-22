@@ -52,15 +52,16 @@ class Maera_WC {
 	function requires() {
 
 		require_once( __DIR__ . '/includes/class-Maera_WC_Timber.php');
+		require_once( __DIR__ . '/includes/class-Maera_WC_Template_Loader.php');
 
 	}
 
 }
 
-// Load our Maera_EDD class if WooCommerce is installed
-if ( class_exists( 'WooCommerce' ) ) {
+// Load our Maera_WC class if WooCommerce is installed
+// if ( class_exists( 'WooCommerce' ) ) {
 	Maera_WC::get_instance();
-}
+// }
 
 /**
  * Licensing handler
