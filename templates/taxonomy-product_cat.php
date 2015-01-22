@@ -28,9 +28,10 @@ if ( empty( $woocommerce_loop['columns'] ) ) {
 }
 
 // Ensure visibility
-if ( ! $product || ! $product->is_visible() ) {
-	return;
-}
+// TODO
+// if ( ! $product || ! $product->is_visible() ) {
+// 	return;
+// }
 
 // Increase loop count
 $woocommerce_loop['loop']++;
