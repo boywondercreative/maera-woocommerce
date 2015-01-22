@@ -1,0 +1,9 @@
+{% extends "main.twig" %}
+{% block content %}
+
+{% do action('woocommerce_before_main_content') %}
+{% include('content-single-product.twig') %}
+{% do action('woocommerce_after_main_content') %}
+{% do action('woocommerce_sidebar') %}
+
+{% endblock %}

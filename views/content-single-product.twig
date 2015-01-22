@@ -1,0 +1,30 @@
+{% do action('woocommerce_before_single_product') %}
+
+{% if function('post_password_required') %}
+    {{ function('get_the_password_form') }}
+{% else %}
+
+{% if product.is_downloadable %}
+	{% if product.download_type == 'application' %}{% set schema = 'SoftwareApplication' %}
+	{% elseif product.download_type == 'music' %}{% set schema = 'MusicAlbum' %}
+	{% else %}{% set schema = 'Product' %}{% endif %}
+{% else %}
+	{% set schema = 'Product' %}
+{% endif %}
+    <div itemscope itemtype="http://schema.org/{{ schema }}" id="product-{{ post.ID }}" {{ function('post_class') }}>
+
+        {% do action('woocommerce_before_single_product_summary') %}
+
+        <div class="summary entry-summary">
+            {% do action('woocommerce_single_product_summary') %}
+        </div><!-- .summary -->
+
+        {% do action('woocommerce_after_single_product_summary') %}
+
+        <meta itemprop="url" content="{{ post.link }}" />
+
+    </div><!-- #product-<?php the_ID(); ?> -->
+
+    {% do action('woocommerce_after_single_product') %}
+
+{% endif %}

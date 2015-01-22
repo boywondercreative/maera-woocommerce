@@ -60,10 +60,16 @@ class Maera_WC {
 
 }
 
-// Load our Maera_WC class if WooCommerce is installed
-// if ( class_exists( 'WooCommerce' ) ) {
-	Maera_WC::get_instance();
-// }
+function maera_wc_init() {
+	if ( ! isset( $GLOBALS['woocommerce'] ) ) {
+		$GLOBALS['woocommerce'] = WC();
+	}
+	// Load our Maera_WC class if WooCommerce is installed
+	if ( class_exists( 'WooCommerce' ) ) {
+		Maera_WC::get_instance();
+	}
+}
+add_action( 'plugins_loaded', 'maera_wc_init' );
 
 /**
  * Licensing handler

@@ -18,6 +18,9 @@ class Maera_WC_Timber {
 	function timber_global_context( $data ) {
 
 		global $product;
+		if ( ! isset( $product ) ) {
+			WC();
+		}
 
 		$data['product'] = $product;
 
