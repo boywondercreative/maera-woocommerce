@@ -44,6 +44,8 @@ class Maera_WC {
 
 		$this->requires();
 
+		$maera_wc_timber = new Maera_WC_Timber();
+
 	}
 
 	/**
