@@ -6,11 +6,15 @@
  *
  * @author 		WooThemes
  * @package 	WooCommerce/Templates
- * @version     1.6.4
+ * @version     3
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-wc_get_template( 'archive-product.php' );
+Maera_Template::dependencies();
+
+Maera_Template::header();
+Maera_Template::main('archive-product.twig');
+Maera_Template::footer();

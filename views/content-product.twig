@@ -1,0 +1,9 @@
+<li {{ function('post_class', classes) }}
+    {% do action('woocommerce_before_shop_loop_item') %}
+    <a href="{{ post.link }}">
+        {% do action('woocommerce_before_shop_loop_item_title') %}
+        <h3>{{ post.title }}</h3>
+        {% do action('woocommerce_after_shop_loop_item_title') %}
+	</a>
+    {% do action('woocommerce_after_shop_loop_item') %}
+</li>

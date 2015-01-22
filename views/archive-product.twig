@@ -1,0 +1,25 @@
+{% do action('woocommerce_before_main_content') %}
+{% if true == true|apply_filters('woocommerce_show_page_title' ) %}
+	<h1 class="page-title">{{ function('woocommerce_page_title') }}</h1>
+{% endif %}
+
+{% do action('woocommerce_archive_description') %}
+
+{% if posts %}
+
+	{% do action('woocommerce_before_shop_loop') %}
+	{{ function('woocommerce_product_loop_start') }}
+	{{ function('woocommerce_product_subcategories') }}
+
+	{% for post in posts %}
+		{% include ['content-'~post.ID~'-product.twig', 'content-product.twig'] %}
+	{% endfor %}
+
+	{{ function('woocommerce_product_loop_end') }}
+	{% do action('woocommerce_after_shop_loop') %}
+
+{% else %}
+	{% include 'loop/no-products-found.twig' %}
+{% endif %}
+
+{% do action('woocommerce_after_main_content') %}
