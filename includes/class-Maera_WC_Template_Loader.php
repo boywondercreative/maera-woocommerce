@@ -10,112 +10,43 @@
  */
 class Maera_WC_Template_Loader {
 
-	/**
-	 * Hook in methods
-	 */
-	public static function init() {
-		add_filter( 'template_include', array( __CLASS__, 'remove_default_templates' ), 15 );
-		add_filter( 'comments_template', array( __CLASS__, 'remove_default_templates' ), 15 );
-		add_filter( 'template_include', array( __CLASS__, 'template_loader' ), 20 );
-		add_filter( 'comments_template', array( __CLASS__, 'comments_template_loader' ), 20 );
-	}
-
-	public static function remove_default_templates() {
-		remove_filter( 'template_include', array( __CLASS__, 'template_loader' ) );
-		remove_filter( 'comments_template', array( __CLASS__, 'comments_template_loader' ) );
+	function __construct() {
+		add_filter( 'woocommerce_locate_template', array( $this, 'locate_template' ), 10, 3 );
 	}
 
 	/**
-	 * Load a template.
-	 *
-	 * Handles template usage so that we can use our own templates instead of the themes.
-	 *
-	 * Templates are in the 'templates' folder. woocommerce looks for theme
-	 * overrides in /theme/woocommerce/ by default
-	 *
-	 * For beginners, it also looks for a woocommerce.php template first. If the user adds
-	 * this to the theme (containing a woocommerce() inside) this will be used for all
-	 * woocommerce templates.
-	 *
-	 * @param mixed $template
-	 * @return string
+	 * Use our own templates folder for loading WooCommerce files from this plugin.
 	 */
-	public static function template_loader( $template ) {
-		$find = array( 'woocommerce.php' );
-		$file = '';
+	function locate_template( $template, $template_name, $template_path ) {
 
-		if ( is_single() && get_post_type() == 'product' ) {
+		global $woocommerce;
+		$_template = $template;
 
-			$file 	= 'single-product.php';
-			$find[] = $file;
-			$find[] = WC()->template_path() . $file;
-
-		} elseif ( is_product_taxonomy() ) {
-
-			$term   = get_queried_object();
-
-			if ( is_tax( 'product_cat' ) || is_tax( 'product_tag' ) ) {
-				$file = 'taxonomy-' . $term->taxonomy . '.php';
-			} else {
-				$file = 'archive-product.php';
-			}
-
-			$find[] = 'taxonomy-' . $term->taxonomy . '-' . $term->slug . '.php';
-			$find[] = WC()->template_path() . 'taxonomy-' . $term->taxonomy . '-' . $term->slug . '.php';
-			$find[] = 'taxonomy-' . $term->taxonomy . '.php';
-			$find[] = WC()->template_path() . 'taxonomy-' . $term->taxonomy . '.php';
-			$find[] = $file;
-			$find[] = WC()->template_path() . $file;
-
-		} elseif ( is_post_type_archive( 'product' ) || is_page( wc_get_page_id( 'shop' ) ) ) {
-
-			$file 	= 'archive-product.php';
-			$find[] = $file;
-			$find[] = WC()->template_path() . $file;
-
+		if ( ! $template_path ) {
+			$template_path = $woocommerce->template_url;
 		}
 
-		if ( $file ) {
-			$template       = locate_template( array_unique( $find ) );
-			if ( ! $template || WC_TEMPLATE_DEBUG_MODE ) {
-				$template = MAERA_WC_PATH . '/templates/' . $file;
-				// $template = WC()->plugin_path() . '/templates/' . $file;
-			}
+		$plugin_path  = MAERA_WC_PATH . '/templates/';
+
+		// Look within passed path within the theme - this is priority
+		$template = locate_template( array(
+			$template_path . $template_name,
+			$template_name
+		));
+
+		// Modification: Get the template from this plugin, if it exists
+		if ( ! $template && file_exists( $plugin_path . $template_name ) ) {
+			$template = $plugin_path . $template_name;
+		}
+
+		// Use default template
+		if ( ! $template ) {
+			$template = $_template;
 		}
 
 		return $template;
+
 	}
 
-	/**
-	 * comments_template_loader function.
-	 *
-	 * @param mixed $template
-	 * @return string
-	 */
-	public static function comments_template_loader( $template ) {
-		if ( get_post_type() !== 'product' ) {
-			return $template;
-		}
-
-		$check_dirs = array(
-			trailingslashit( get_stylesheet_directory() ) . WC()->template_path(),
-			trailingslashit( get_template_directory() ) . WC()->template_path(),
-			trailingslashit( get_stylesheet_directory() ),
-			trailingslashit( get_template_directory() ),
-			trailingslashit( MAERA_WP_PATH ) . 'templates/',
-			trailingslashit( WC()->plugin_path() ) . 'templates/'
-		);
-
-		if ( WC_TEMPLATE_DEBUG_MODE ) {
-			$check_dirs = array( array_pop( $check_dirs ) );
-		}
-
-		foreach ( $check_dirs as $dir ) {
-			if ( file_exists( trailingslashit( $dir ) . 'single-product-reviews.php' ) ) {
-				return trailingslashit( $dir ) . 'single-product-reviews.php';
-			}
-		}
-	}
 }
-
 Maera_WC_Template_Loader::init();
